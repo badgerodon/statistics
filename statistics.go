@@ -48,25 +48,7 @@ func CovarianceMatrix(mat Matrix) Matrix {
 	
 	return c
 }
-// Find the variance of a vector
-func Variance(vector Vector) float64 {
-	n := 0.0
-	mean := 0.0
-	S := 0.0
-	delta := 0.0
-	
-	for _, v := range vector {
-		n++
-		delta = v - mean
-		mean = mean + (delta / n)
-		S += delta * (v - mean)
-	}
-	
-	return S / (n - 1)
-}
-/**
- * Make a matrix positive definite by removing rows which are too similar
- */
+// Make a matrix positive definite by removing rows which are too similar
 func MakePositiveDefinite(mat Matrix) ([]int, Matrix) {
 	rowIndices := make([]int, mat.Rows)
 	mod := NewMatrix(mat.Rows, mat.Cols)
@@ -121,4 +103,29 @@ func MakePositiveDefinite(mat Matrix) ([]int, Matrix) {
 		}
 	}
 	return indices, final
+}
+// Take an absolute return series and transform it into a relative one
+// The new vector will have one less item
+func Relativize(vector Vector) Vector {
+	nv := NewVector(len(vector)-1)
+	for i := 1; i < len(vector); i++ {
+		nv[i-1] = (vector[i] - vector[i-1])/vector[i-1]
+	}
+	return nv
+}
+// Find the variance of a vector
+func Variance(vector Vector) float64 {
+	n := 0.0
+	mean := 0.0
+	S := 0.0
+	delta := 0.0
+	
+	for _, v := range vector {
+		n++
+		delta = v - mean
+		mean = mean + (delta / n)
+		S += delta * (v - mean)
+	}
+	
+	return S / (n - 1)
 }
